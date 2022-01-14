@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zabbix_export>
+    <version>5.0</version>
+    <date>2022-01-14T12:27:41Z</date>
+    <groups>
+        <group>
+            <name>Templates/Futur-Tech/Applications</name>
+        </group>
+    </groups>
+    <templates>
+        <template>
+            <template>Template Futur-Tech App Zabbix Proxy</template>
+            <name>Template Futur-Tech App Zabbix Proxy</name>
+            <description>https://github.com/Futur-Tech/futur-tech-zabbix-proxy&#13;
+Added trigger when Proxy goes offline&#13;
+Disable: trigger &quot;More than 100 items having missing data for more than 10 minutes&quot;</description>
+            <templates>
+                <template>
+                    <name>Template App Zabbix Proxy</name>
+                </template>
+            </templates>
+            <groups>
+                <group>
+                    <name>Templates/Futur-Tech/Applications</name>
+                </group>
+            </groups>
+            <macros>
+                <macro>
+                    <macro>{$PROXY.NODATA_TIMEOUT.CRIT}</macro>
+                    <value>10m</value>
+                    <description>No data timeout for proxy (critical).</description>
+                </macro>
+                <macro>
+                    <macro>{$PROXY.NODATA_TIMEOUT.WARN}</macro>
+                    <value>5m</value>
+                    <description>No data timeout for proxy (warning).</description>
+                </macro>
+            </macros>
+        </template>
+    </templates>
+    <triggers>
+        <trigger>
+            <expression>{Template Futur-Tech App Zabbix Proxy:zabbix[wcache,values].nodata({$PROXY.NODATA_TIMEOUT.CRIT},strict)}=1</expression>
+            <name>No data from Zabbix Proxy for {$PROXY.NODATA_TIMEOUT.CRIT}</name>
+            <priority>DISASTER</priority>
+        </trigger>
+        <trigger>
+            <expression>{Template Futur-Tech App Zabbix Proxy:zabbix[wcache,values].nodata({$PROXY.NODATA_TIMEOUT.WARN},strict)}=1</expression>
+            <name>No data from Zabbix Proxy for {$PROXY.NODATA_TIMEOUT.WARN}</name>
+            <priority>AVERAGE</priority>
+            <dependencies>
+                <dependency>
+                    <name>No data from Zabbix Proxy for {$PROXY.NODATA_TIMEOUT.CRIT}</name>
+                    <expression>{Template Futur-Tech App Zabbix Proxy:zabbix[wcache,values].nodata({$PROXY.NODATA_TIMEOUT.CRIT},strict)}=1</expression>
+                </dependency>
+            </dependencies>
+        </trigger>
+    </triggers>
+</zabbix_export>
